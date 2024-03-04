@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html style="height: 100%;">
+
+<head>
+	<title>Star classification test</title>
+</head>
+
+<body style="margin: 0; height: 100%;">
+	<canvas id="canvas" style="position: absolute; display: block; z-index: 2;"></canvas>
+	<div id="background"
+		style="height:100vh; width:100%; background-color: black; position: absolute; overflow: hidden;"></div>
+
+	<script>
+		//CANVAS
+		let isDrawing = false;
+		let x = 0;
+		let y = 0;
+
+		const canvas = document.getElementById('canvas');
+		const context = canvas.getContext('2d');
+
+		canvas.addEventListener('mousedown', (e) => {
+			x = e.offsetX;
+			y = e.offsetY;
+			isDrawing = true;
+		});
+
+		canvas.addEventListener('mousemove', (e) => {
+			if (isDrawing) {
+				drawLine(context, x, y, e.offsetX, e.offsetY);
+				x = e.offsetX;
+				y = e.offsetY;
+			}
+		});
+
+		canvas.addEventListener('mouseup', (e) => {
+			if (isDrawing) {
+				drawLine(context, x, y, e.offsetX, e.offsetY);
+				x = 0;
+				y = 0;
+				isDrawing = false;
+			}
+		});
+
+		function drawLine(context, x1, y1, x2, y2) {
+			context.beginPath();
+			context.strokeStyle = "white";
+			context.lineWidth = "6";
+			context.lineJoin = "round";
+			context.moveTo(x1, y1);
+			context.lineTo(x2, y2);
+			context.closePath();
+			context.stroke();
+		}
+
+
+		//CANVAS RESIZE
+		function resizeCanvas() {
+			let temp = context.getImageData(0, 0, canvas.width, canvas.height)
+			canvas.width = window.innerWidth;
+			canvas.height = window.innerHeight;
+			context.putImageData(temp, 0, 0)
+		}
+		resizeCanvas()
+
+		window.addEventListener("resize", (e) => {
+			resizeCanvas()
+		});
+
+
+		//STARS
+		function random(min, max) {
+			return min + Math.random() * (max + 1 - min);
+		}
+
+		const body = document.querySelector('body');
+		const canvasSize = body.offsetWidth * body.offsetHeight;
+		const starsFraction = canvasSize / 2000;
+
+		for (let i = 0; i < starsFraction; i++) {
+			let xPos = random(0, 100);
+			let yPos = random(0, 100);
+			let alpha = random(0.5, 1);
+			let size = random(1, 2);
+			let colour = '#ffffff';
+
+			const star = document.createElement('div');
+			star.style.position = 'relative';
+			star.style.left = xPos + '%';
+			star.style.top = yPos + '%';
+			star.style.opacity = alpha;
+			star.style.width = size + 'px';
+			star.style.height = size + 'px';
+			star.style.backgroundColor = colour;
+			star.style.position = "absolute";
+			document.getElementById('background').appendChild(star);
+		}
+	</script>
+</body>
+
+</html>
